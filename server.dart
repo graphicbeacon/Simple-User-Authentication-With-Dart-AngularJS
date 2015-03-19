@@ -1,29 +1,19 @@
 import "dart:io";
 import "package:http_server/http_server.dart" show VirtualDirectory;
 
-final HTTP_ROOT_PATH = Platform.script.resolve('web').toFilePath();
 final HOST = InternetAddress.LOOPBACK_IP_V4;
 final PORT = 4567;
 
-VirtualDirectory virDir;
-
-void directoryHandler(dir, request) {
-  var indexUri = new Uri.file(dir.path).resolve('index.html');
-  virDir.serveFile(new File(indexUri.toFilePath()), request);
-}
-
 void handleError(error) {
-  print("Problems processing request $error");  
+  print("Problems: $error");  
 }
 
 void main() {
-  virDir = new VirtualDirectory(Platform.script.resolve('web').toFilePath())
-    ..allowDirectoryListing = true
-    ..directoryHandler = directoryHandler;
+  VirtualDirectory virDir = new VirtualDirectory('web');
 
-  HttpServer.bind(InternetAddress.LOOPBACK_IP_V4, PORT).then((server) {
+  HttpServer.bind(HOST, PORT).then((server) {
     server.listen((request) {
-      virDir.serveRequest(request);
+      virDir.serveFile(new File('web/index.html'), request);
     }).onError(handleError);
   }).catchError(handleError);
 }
