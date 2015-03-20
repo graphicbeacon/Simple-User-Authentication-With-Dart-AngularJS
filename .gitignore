@@ -17,4 +17,5 @@ pubspec.lock
 
 # Miscellanaeous
 .idea/
+web/bower_components/
 
