@@ -14,7 +14,9 @@
                 return;
             }
 
-            // Use Authentication Service and login in
+            // TODO: Move this to independent 'Authentication' Service
+            // TODO: Implement logout service
+            // TODO: Have global navigation shared across controllers, maybe using factories
             Http.post('/auth/login', this.userCredentials)
                 .success(function(successfulLogin, status, headers, config) {
                     //console.log('Success', config);
@@ -29,9 +31,12 @@
                     // Reset form to fresh state
                     loginFormCtrl.$setPristine();
                     vm.submitted = false;
+
+                    // ;-)
+                    // console && console.clear();
                 })
                 .error(function(data, status) {
-                    console.error('Problems: ' + status);
+
                 });
         };
     };
