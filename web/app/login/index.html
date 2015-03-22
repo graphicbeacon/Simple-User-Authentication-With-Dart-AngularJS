@@ -1,11 +1,17 @@
-<form name="SimpleAppLoginForm" ng-submit="">
-  <div class="form-group">
+<form name="SimpleAppLoginForm" ng-submit="loginCtrl.authenticate(SimpleAppLoginForm)" novalidate>
+
+    <div class="alert alert-danger" ng-show="SimpleAppLoginForm.$invalid && loginCtrl.submitted">
+        Please fill in the required fields.
+    </div>
+  <div class="form-group" ng-class="{'has-error': SimpleAppLoginForm.SAUser.$invalid && SimpleAppLoginForm.SAUser.$dirty,
+                                    'has-success': SimpleAppLoginForm.SAUser.$valid && SimpleAppLoginForm.SAUser.$dirty}">
     <label>Username</label>
-    <input type="text" class="form-control" id="LoginUser" placeholder="username">
+    <input type="text" class="form-control" id="SAUser" name="SAUser" ng-model="loginCtrl.userCredentials.username" placeholder="username" minlength="5" required>
   </div>
-  <div class="form-group">
+  <div class="form-group" ng-class="{'has-error': SimpleAppLoginForm.SAPassword.$invalid && SimpleAppLoginForm.SAPassword.$dirty,
+                                    'has-success': SimpleAppLoginForm.SAPassword.$valid && SimpleAppLoginForm.SAPassword.$dirty}">
     <label>Password</label>
-    <input type="password" class="form-control" id="LoginPassword" placeholder="password">
+    <input type="password" class="form-control" id="SAPassword" name="SAPassword" ng-model="loginCtrl.userCredentials.password" placeholder="password" minlength="5" required>
   </div>
-  <button type="submit" class="btn btn-default" ng-click="loginCtrl.authenticate(true)">Log in!</button>
+  <button type="submit" class="btn btn-default">Log in!</button>
 </form>

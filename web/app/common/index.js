@@ -33,27 +33,36 @@
 
     function RouteInterceptors(Q, Location) {
 
-        var request = function(config) {
+        var request, requestError, response, responseError;
 
-            if('undefined' == typeof config.headers['SimpleAppAuthToken']) {
+        request = function(config) {
+            //console.dir(config);
+
+            if(localStorage.getItem('SimpleAppAuthToken') == null) {
                 Location.path('/login');
             }
 
             return config;
         };
 
-        var requestError = function(error) {
+        requestError = function(error) {
             return Q.reject(error);
         };
 
-        var response = function(response) {
+        response = function(response) {
             return response;
+        };
+
+        responseError = function(error) {
+            //console.dir(error);
+            return Q.reject(error.data);
         };
 
         return {
             request: request,
             requestError: requestError,
-            response: response
+            response: response,
+            responseError: responseError
         };
     }
 

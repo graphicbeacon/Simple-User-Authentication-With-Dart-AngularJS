@@ -1,30 +1,43 @@
 (function() {
     'use strict';
 
-    function LoginController (Http) {
+    function LoginController (Http, Location) {
 
-        var ctrl = this;
-        ctrl.submitted = false;
+        this.submitted = false;
+        this.userCredentials = {};
 
-        ctrl.authenticate = function(loginFormCtrl) {
+        this.authenticate = function(loginFormCtrl) {
+            var vm = this;
+
             if(loginFormCtrl.$invalid) {
-                ctrl.submitted = true;
+                vm.submitted = true;
                 return;
             }
 
             // Use Authentication Service and login in
-            Http.post('/auth/login', { data: 'boo' })
-              .success(function(data) {
-                console.log(data);
-              })
-              .error(function(data) {
-                console.log('Problems' + data);
-              });
-        };
+            Http.post('/auth/login', this.userCredentials)
+                .success(function(successfulLogin, status, headers, config) {
+                    //console.log('Success', config);
+                    var authToken = headers('SimpleAppAuthToken');
 
+                    if(authToken && localStorage.getItem('SimpleAppAuthToken') == null) {
+                        localStorage.setItem('SimpleAppAuthToken', authToken);
+                    }
+                    // Redirect to homepage
+                    Location.path(successfulLogin.redirectTo);
+
+                    // Reset form to fresh state
+                    loginFormCtrl.$setPristine();
+                    vm.submitted = false;
+                })
+                .error(function(data, status) {
+                    console.error('Problems: ' + status);
+                });
+        };
     };
+
     
-    LoginController.$inject = ['$http'];
+    LoginController.$inject = ['$http', '$location'];
 
     angular.module("SimpleApp")
         .controller("LoginController", LoginController);
