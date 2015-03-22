@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    function LoginController () {
+    function LoginController (Http) {
 
         var ctrl = this;
         ctrl.submitted = false;
@@ -13,10 +13,18 @@
             }
 
             // Use Authentication Service and login in
-            console.log('Yay!');
+            Http.post('/auth/login', { data: 'boo' })
+              .success(function(data) {
+                console.log(data);
+              })
+              .error(function(data) {
+                console.log('Problems' + data);
+              });
         };
 
     };
+    
+    LoginController.$inject = ['$http'];
 
     angular.module("SimpleApp")
         .controller("LoginController", LoginController);
