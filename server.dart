@@ -1,17 +1,19 @@
 import "dart:io";
-import "package:http_server/http_server.dart" show VirtualDirectory;
-import "package:route/server.dart";
-import "package:route/url_pattern.dart";
+import 'package:route/server.dart';
+import 'package:path/path.dart' as path;
 
 final HOST = InternetAddress.LOOPBACK_IP_V4;
 final PORT = 4567;
 
-VirtualDirectory virDir;
-
-void directoryHandler(directory, request) {
-  var indexUri = new Uri.file(directory.path).resolve('index.html');
-  virDir.serveFile(new File(indexUri.toFilePath()), request);
-}
+Map<String, String> contentTypes = const {
+    "html": "text/html; charset=UTF-8",
+    "dart": "application/dart",
+    "js": "application/javascript",
+    "jpg": "image/jpeg",
+    "png": "image/png",
+    "txt": "text/plain",
+    "json": "application/json"
+};
 
 void errorPageHandler(HttpRequest request) {
   request.response
@@ -25,18 +27,24 @@ void handleError(error) {
 }
 
 void main() {
-  var buildPath = 'web';
+  var buildPath = './web';
 
-  virDir = new VirtualDirectory(buildPath)
-    ..allowDirectoryListing = true
-    ..directoryHandler = directoryHandler
-    ..errorPageHandler = errorPageHandler;
-
+  // TODO: Ensure that all requests have a valid response.
+  // This contains a status code, content type, message
+  // TODO: Use Route package
+  
   HttpServer.bind(HOST, PORT).then((server) {
-    server.listen((request) {
-      print(request.uri);
-
-      virDir.serveRequest(request);
-    }).onError(handleError);
+    server.asBroadcastStream()
+      ..where((r) => new RegExp(r"^(\/|\/index\.html|)$").hasMatch(r.uri.path)).listen((req){
+        File index = new File("${buildPath}/index.html");
+        req.response.headers.contentType = ContentType.parse(contentTypes[index.path.split('.').last]);
+        index.openRead().pipe(req.response);
+      })
+      ..where((r) => new RegExp(r"^\/(app|bower\_components)").hasMatch(r.uri.path)).listen((req){
+        File file = new File("${buildPath}${req.uri.path}");
+        req.response.headers.contentType = ContentType.parse(contentTypes[file.path.split('.').last]);
+        file.openRead().pipe(req.response);
+      })
+      ..handleError(handleError);
   }).catchError(handleError);
 }
