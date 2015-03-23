@@ -2,7 +2,7 @@
     'use strict';
 
     function AccountController () {
-
+        this.title = "Accounts";
     };
 
     angular.module("simpleApp")

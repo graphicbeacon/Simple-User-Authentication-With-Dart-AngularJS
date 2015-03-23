@@ -37,6 +37,7 @@ void main() {
           if(credList[0] == dataStoreCredentials['username'] && credList[1] == dataStoreCredentials['password']) {
             var jsonResponse = JSON.encode({'redirectTo': '/'});
             req.response.headers.contentType = ContentType.parse(contentTypes['json']);
+            // TODO: Use uuid to generate proper token
             req.response.headers.set("SimpleAppAuthToken", "1234");
             req.response.write(jsonResponse);
             req.response.close();

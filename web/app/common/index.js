@@ -1,11 +1,13 @@
 (function(){
     'use strict';
 
+
+    // TODO: Logic to manage top navigation items, maybe on rootScope
+    // TODO: Manage all urls in service?
+
     function SimpleAppController () {
         this.appName = "Simple App";
     };
-
-
 
     function RoutesConfig (Route, HttpProvider) {
 
@@ -19,6 +21,11 @@
             controller: 'LoginController',
             controllerAs: 'loginCtrl'
         })
+        .when('/projects', {
+            templateUrl: '/app/projects/index.html',
+            controller: 'ProjectsController',
+            controllerAs: 'projectsCtrl'
+        })
         .otherwise({
             redirectTo: '/'
         });
@@ -29,17 +36,20 @@
     RoutesConfig.$inject = ['$routeProvider', '$httpProvider'];
 
 
-
-
     function RouteInterceptors(Q, Location) {
 
         var request, requestError, response, responseError;
 
         request = function(config) {
-            //console.dir(config);
 
-            if(localStorage.getItem('SimpleAppAuthToken') == null) {
+            var authToken = localStorage.getItem('SimpleAppAuthToken');
+
+            // TODO: Manage sitemap structure (allow entry to '/' with link at top to login instead to going straight to /login)
+            if(authToken == null) {
                 Location.path('/login');
+            }
+            else if(authToken && config.url == '/app/login/index.html') {
+                Location.path('/');
             }
 
             return config;
@@ -54,7 +64,6 @@
         };
 
         responseError = function(error) {
-            //console.dir(error);
             return Q.reject(error.data);
         };
 

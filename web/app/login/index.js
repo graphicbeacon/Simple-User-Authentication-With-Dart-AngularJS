@@ -3,11 +3,12 @@
 
     function LoginController (Http, Location, AuthenticationService) {
 
+        this.title = "Login";
         this.submitted = false;
         this.userCredentials = {};
 
         this.authenticate = function(loginFormCtrl) {
-
+            var vm = this;
             var form = loginFormCtrl;
 
             if(form.$invalid) {
@@ -29,7 +30,7 @@
 
                     // Reset form to pristine state
                     form.$setPristine();
-                    this.userCredentials = {};
+                    vm.userCredentials = {};
                     form.problemLogin = false;
                 })
                 .error(function() {
@@ -39,7 +40,6 @@
         };
     };
 
-    
     LoginController.$inject = ['$http', '$location', 'AuthenticationService'];
 
     angular.module("simpleApp")
