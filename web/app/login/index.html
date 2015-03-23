@@ -1,8 +1,12 @@
 <form name="SimpleAppLoginForm" ng-submit="loginCtrl.authenticate(SimpleAppLoginForm)" novalidate>
 
-    <div class="alert alert-danger" ng-show="SimpleAppLoginForm.$invalid && loginCtrl.submitted">
+    <div class="alert alert-danger" ng-show="SimpleAppLoginForm.$invalid && SimpleAppLoginForm.attemptedSubmission">
         Please fill in the required fields.
     </div>
+    <div class="alert alert-danger" ng-show="SimpleAppLoginForm.problemLogin">
+        Incorrect username or password combination. Please check and try again.
+    </div>
+
   <div class="form-group" ng-class="{'has-error': SimpleAppLoginForm.SAUser.$invalid && SimpleAppLoginForm.SAUser.$dirty,
                                     'has-success': SimpleAppLoginForm.SAUser.$valid && SimpleAppLoginForm.SAUser.$dirty}">
     <label>Username</label>
