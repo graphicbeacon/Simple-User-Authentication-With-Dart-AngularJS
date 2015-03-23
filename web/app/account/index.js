@@ -5,6 +5,6 @@
 
     };
 
-    angular.module("SimpleApp")
+    angular.module("simpleApp")
         .controller("AccountController", AccountController);
 })();

@@ -8,39 +8,17 @@
         };
 
         this.login = function(form, userCredentials) {
-
-            Http.post(authUrls.login, userCredentials)
-                .success(function(successData) {
-
-                    var authToken = headers('SimpleAppAuthToken');
-
-                    if(authToken && localStorage.getItem('SimpleAppAuthToken') == null) {
-                        localStorage.setItem('SimpleAppAuthToken', authToken);
-                    }
-                    // Redirect to homepage
-                    Location.path(successData.redirectTo);
-
-                    // Reset form to fresh state
-                    form.$setPristine();
-                    form.attemptedSubmission = false;
-                    form.problemLogin = false;
-
-                })
-                .error(function(data, status) {
-                    form.$setPristine();
-                    form.problemLogin = true;
-                    form.attemptedSubmission = false;
-                });
+            return Http.post(authUrls.login, userCredentials);
         };
 
         this.logout = function(username) {
-
+            // TODO: Implement logout service
         };
     };
 
     AuthenticationService.$inject = ['$http'];
 
-    angular.module('SimpleApp', [])
+    angular.module('simpleApp')
         .service('AuthenticationService', AuthenticationService);
 
 })();

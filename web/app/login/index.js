@@ -15,16 +15,33 @@
                 return;
             }
 
-            // TODO: Move this to independent 'Authentication' Service
-            // TODO: Implement logout service
-            // TODO: Have global navigation shared across controllers, maybe using factories
-            AuthenticationService.login(form, userCredentials);
+            AuthenticationService
+                .login(form, this.userCredentials)
+                .success(function(successData, status, headers) {
+
+                    var authToken = headers('SimpleAppAuthToken');
+
+                    if(authToken && localStorage.getItem('SimpleAppAuthToken') == null) {
+                        localStorage.setItem('SimpleAppAuthToken', authToken);
+                    }
+                    // Redirect to homepage
+                    Location.path(successData.redirectTo);
+
+                    // Reset form to pristine state
+                    form.$setPristine();
+                    this.userCredentials = {};
+                    form.problemLogin = false;
+                })
+                .error(function() {
+                    form.$setPristine();
+                    form.problemLogin = true;
+                });
         };
     };
 
     
     LoginController.$inject = ['$http', '$location', 'AuthenticationService'];
 
-    angular.module("SimpleApp")
+    angular.module("simpleApp")
         .controller("LoginController", LoginController);
 })();

@@ -71,7 +71,7 @@
 
 
     // Module Setup
-    angular.module('SimpleApp', ['ngRoute'])
+    angular.module('simpleApp', ['ngRoute','ngMessages'])
         .controller('SimpleAppController', SimpleAppController)
         .factory('RouteInterceptors', RouteInterceptors)
         .config(RoutesConfig);
