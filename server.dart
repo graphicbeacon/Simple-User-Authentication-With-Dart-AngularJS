@@ -2,22 +2,20 @@ library simpleApp;
 
 import "dart:io";
 import "dart:convert";
-import "dart:collection";
+import "dart:async";
+
 import 'package:route/server.dart';
 import 'package:path/path.dart' as path;
 import 'package:route/url_pattern.dart';
+import 'package:uuid/uuid.dart';
 
 part 'bin/urls.dart';
 part 'bin/content_types.dart';
 part 'bin/request_handlers.dart';
+part 'bin/authenticationservice.dart';
 
 final HOST = InternetAddress.LOOPBACK_IP_V4;
 final PORT = 4567;
-
-var dataStoreCredentials = {
-  "username": "admin",
-  "password": "superman"
-};
 
 void main() {
 
@@ -32,20 +30,21 @@ void main() {
       ..serve(authUrl, method: 'POST').listen((req) {
         req.transform(UTF8.decoder).listen((data) {
           var credLinkedHash = JSON.decode(data);
-          var credList = credLinkedHash.values.toList();
+          var credentials = credLinkedHash.values.toList();
 
-          if(credList[0] == dataStoreCredentials['username'] && credList[1] == dataStoreCredentials['password']) {
-            var jsonResponse = JSON.encode({'redirectTo': '/'});
+          Future loginResponse = new AuthenticationService().login(credentials[0], credentials[1]);
+
+          loginResponse.then((Map success) {
             req.response.headers.contentType = ContentType.parse(contentTypes['json']);
-            // TODO: Use uuid to generate proper token
-            req.response.headers.set("SimpleAppAuthToken", "1234");
-            req.response.write(jsonResponse);
-            req.response.close();
-          } else {
+            req.response.headers.set("SimpleAppAuthToken", success["sessionToken"]);
+            req.response.write(JSON.encode(success));
+          })
+          .catchError((String error) {
             req.response.statusCode = 401;
-            req.response.write("Invalid username and password information");
-            req.response.close();
-          }
+            req.response.write(error);
+          })
+          .whenComplete(req.response.close);
+
         });
       })
       
