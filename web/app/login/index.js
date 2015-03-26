@@ -33,7 +33,7 @@
                     vm.userCredentials = {};
                     form.problemLogin = false;
                 })
-                .error(function() {
+                .error(function(error) {
                     form.$setPristine();
                     form.problemLogin = true;
                 });

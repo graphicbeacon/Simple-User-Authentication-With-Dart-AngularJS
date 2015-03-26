@@ -16,12 +16,9 @@ class AuthenticationService {
 
     if(user["username"] != username || user["password"] != plainTextPassword) {
       completer.completeError("Wrong username or password.");
+    } else {
+      completer.complete({ "redirectTo" : "/" });
     }
-
-    var uuid = new Uuid();
-    var sessionToken = uuid.v1();
-
-    completer.complete({ "redirectTo" : "/", "sessionToken" : sessionToken });
 
     return completer.future;
 

@@ -27,7 +27,7 @@ Function serveFile({String directory, String filePath}) {
     print(filePathFull);
 
     File file = new File(filePathFull);
-    response.headers.contentType = ContentType.parse(contentTypes[file.path.split('.').last]);
+    response.headers.contentType = ContentTypes.forFile(file);
     file
       .openRead()
       .pipe(response)

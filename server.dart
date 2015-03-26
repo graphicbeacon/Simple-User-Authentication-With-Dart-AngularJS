@@ -35,8 +35,11 @@ void main() {
           Future loginResponse = new AuthenticationService().login(credentials[0], credentials[1]);
 
           loginResponse.then((Map success) {
-            req.response.headers.contentType = ContentType.parse(contentTypes['json']);
-            req.response.headers.set("SimpleAppAuthToken", success["sessionToken"]);
+            // Create session token
+            var sessionToken = new Uuid().v1();
+
+            req.response.headers.contentType = ContentTypes.JSON;
+            req.response.headers.set("SimpleAppAuthToken", sessionToken);
             req.response.write(JSON.encode(success));
           })
           .catchError((String error) {
