@@ -11,13 +11,18 @@ void handleError(error) {
   print("Problems: $error");
 }
 
-Function serveFile({String filePath}) {
-  var buildPath = './web';
+Function serveFile({String directory, String filePath}) {
+  var buildPath = directory == null ? './web' : directory;
   
   return (HttpRequest req) {
     var fileLocation = filePath == null ? req.uri.path.replaceFirst(new RegExp(r'^\/'),'') : filePath;
     var filePathFull = path.join(buildPath, fileLocation);
     var response = req.response;
+
+    if(filePathFull.startsWith(new RegExp(r'\.[^\/]'))) {
+      errorPageHandler(req);
+      return;
+    }
 
     print(filePathFull);
 
@@ -27,7 +32,7 @@ Function serveFile({String filePath}) {
       .openRead()
       .pipe(response)
       .catchError((error) {
-        print("There was a problem opening the file at ${file.path}}: $error");
+        print("Problem opening file ${file.path}}: $error");
       });
 
   };
