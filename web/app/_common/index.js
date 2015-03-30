@@ -9,9 +9,15 @@
         this.appName = "Simple App";
     };
 
-    function RoutesConfig (Route, HttpProvider) {
+    function RoutesConfig (Route) {
 
-        Route.when('/', {
+        Route
+        .when('/', {
+            templateUrl: '/app/dashboard/index.html',
+            controller: 'DashboardController',
+            controllerAs: 'dashboardCtrl'
+        })
+        .when('/account', {
             templateUrl: '/app/account/index.html' ,
             controller: 'AccountController',
             controllerAs: 'accountCtrl'
@@ -30,10 +36,9 @@
             redirectTo: '/'
         });
 
-        HttpProvider.interceptors.push('RouteInterceptors');
     };
 
-    RoutesConfig.$inject = ['$routeProvider', '$httpProvider'];
+    RoutesConfig.$inject = ['$routeProvider'];
 
     // Module Setup
     angular.module('simpleApp', ['ngRoute','ngMessages'])

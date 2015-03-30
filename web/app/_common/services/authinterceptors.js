@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    function RouteInterceptors(Q, Location) {
+    function AuthInterceptors(Q, Location) {
 
         var request, requestError, response, responseError;
 
@@ -44,8 +44,15 @@
         };
     }
 
-    RouteInterceptors.$inject = ['$q', '$location'];
+    AuthInterceptors.$inject = ['$q', '$location'];
+
+    function AuthConfig(HttpProvider) {
+        HttpProvider.interceptors.push('AuthInterceptors');
+    }
+
+    AuthConfig.$inject = ['$httpProvider'];
 
     angular.module('simpleApp')
-        .factory('RouteInterceptors', RouteInterceptors);
+        .factory('AuthInterceptors', AuthInterceptors)
+        .config(AuthConfig);
 })();
