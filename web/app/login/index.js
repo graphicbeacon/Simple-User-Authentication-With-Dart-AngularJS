@@ -26,7 +26,7 @@
                         localStorage.setItem('SimpleAppAuthToken', authToken);
                     }
                     // Redirect to homepage
-                    Location.path(successData.redirectTo);
+                    Location.path('/');
 
                     // Reset form to pristine state
                     form.$setPristine();

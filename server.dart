@@ -9,10 +9,15 @@ import 'package:path/path.dart' as path;
 import 'package:route/url_pattern.dart';
 import 'package:uuid/uuid.dart';
 
+// Utilities
 part 'bin/urls.dart';
-part 'bin/content_types.dart';
 part 'bin/request_handlers.dart';
-part 'bin/app_routes.dart';
+
+// Classes
+part 'bin/contenttypes.dart';
+part 'bin/menuitem.dart';
+part 'bin/menuitemservice.dart';
+part 'bin/approutes.dart';
 part 'bin/authenticationservice.dart';
 
 final HOST = InternetAddress.LOOPBACK_IP_V4;
@@ -31,7 +36,7 @@ void main() {
       ..serve(authUrl, method: 'POST').listen(AppRoutes.login)
       
       // Default Response for Not Found
-      ..defaultStream.listen(AppRoutes.errorPageHandler);
+      ..defaultStream.listen(AppRoutes.errorPageHandler());
     
   }).catchError(handleError);
 }

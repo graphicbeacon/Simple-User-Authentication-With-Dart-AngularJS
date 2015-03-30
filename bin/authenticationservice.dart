@@ -3,24 +3,24 @@ part of simpleApp;
 
 class AuthenticationService {
 
-  var user = {
-      "username": "admin",
-      "password": "superman"
-  };
+  var store;
 
-  AuthenticationService();
+  AuthenticationService(this.store);
 
   Future login(String username, String plainTextPassword) {
 
     var completer = new Completer();
 
-    if(user["username"] != username || user["password"] != plainTextPassword) {
-      completer.completeError("Wrong username or password.");
+    if(this.store["username"] == username && this.store["password"] == plainTextPassword) {
+      // Create session token
+      var sessionToken = new Uuid().v1();
+
+      completer.complete(sessionToken);
     } else {
-      completer.complete({ "redirectTo" : "/" });
+      completer.completeError("Wrong username or password.");
     }
 
-    return completer.future;
+  return completer.future;
 
   }
 
