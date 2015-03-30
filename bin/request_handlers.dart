@@ -11,7 +11,7 @@ void handleError(error) {
   print("Problems: $error");
 }
 
-Function serveFile({String directory, String filePath}) {
+Function serveResource({String directory, String filePath}) {
   var buildPath = directory == null ? './web' : directory;
   
   return (HttpRequest req) {

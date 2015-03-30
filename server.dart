@@ -12,6 +12,7 @@ import 'package:uuid/uuid.dart';
 part 'bin/urls.dart';
 part 'bin/content_types.dart';
 part 'bin/request_handlers.dart';
+part 'bin/app_routes.dart';
 part 'bin/authenticationservice.dart';
 
 final HOST = InternetAddress.LOOPBACK_IP_V4;
@@ -23,36 +24,14 @@ void main() {
     print("Server listening at ${HOST}:$PORT");
     
     new Router(server)
-      ..serve(indexUrl).listen(serveFile(filePath: 'index.html'))
-      ..serve(appResourceUrl).listen(serveFile())
+      ..serve(indexUrl).listen(AppRoutes.serveSpaIndex())
+      ..serve(appResourceUrl).listen(AppRoutes.serveStaticDirectory())
       
       // Rest API Endpoints
-      ..serve(authUrl, method: 'POST').listen((req) {
-        req.transform(UTF8.decoder).listen((data) {
-          var credLinkedHash = JSON.decode(data);
-          var credentials = credLinkedHash.values.toList();
-
-          Future loginResponse = new AuthenticationService().login(credentials[0], credentials[1]);
-
-          loginResponse.then((Map success) {
-            // Create session token
-            var sessionToken = new Uuid().v1();
-
-            req.response.headers.contentType = ContentTypes.JSON;
-            req.response.headers.set("SimpleAppAuthToken", sessionToken);
-            req.response.write(JSON.encode(success));
-          })
-          .catchError((String error) {
-            req.response.statusCode = 401;
-            req.response.write(error);
-          })
-          .whenComplete(req.response.close);
-
-        });
-      })
+      ..serve(authUrl, method: 'POST').listen(AppRoutes.login)
       
       // Default Response for Not Found
-      ..defaultStream.listen(errorPageHandler);
+      ..defaultStream.listen(AppRoutes.errorPageHandler);
     
   }).catchError(handleError);
 }
