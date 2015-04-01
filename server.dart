@@ -34,6 +34,8 @@ void main() {
       
       // Rest API Endpoints
       ..serve(authUrl, method: 'POST').listen(AppRoutes.login)
+      ..serve(navUrl, method: 'POST').listen(AppRoutes.nav)
+      ..serve(tokenUrl, method: 'POST').listen(AppRoutes.validateToken)
       
       // Default Response for Not Found
       ..defaultStream.listen(AppRoutes.errorPageHandler());

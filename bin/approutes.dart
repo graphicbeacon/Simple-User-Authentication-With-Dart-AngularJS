@@ -47,4 +47,41 @@ class AppRoutes {
 
   }
 
+  static void nav (HttpRequest req) {
+
+    req.transform(UTF8.decoder).listen((String sessionToken) {
+
+      if(sessionToken == user["sessionToken"]) {
+
+        var adminMenu = JSON.encode(new MenuItemService().getAdminMenu());
+        req.response.write(adminMenu);
+
+      } else {
+
+        var defaultMenu = JSON.encode(new MenuItemService().getDefaultMenu());
+        req.response.write(defaultMenu);
+
+      }
+
+      // close after getting correct menu
+      req.response.close();
+
+    });
+  }
+
+  static void validateToken (HttpRequest req) {
+
+    req.transform(UTF8.decoder).listen((String sessionToken) {
+
+      if (sessionToken == user["sessionToken"]) {
+        req.response.write('Valid token');
+      } else {
+        req.response.statusCode = 401;
+        req.response.write('Invalid token.');
+      }
+
+      req.response.close();
+    });
+  }
+
 }

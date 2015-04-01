@@ -37,7 +37,7 @@
                     form.problemLogin = true;
                 });
         };
-    };
+    }
 
     LoginController.$inject = ['$http', '$location', '$rootScope', 'AuthenticationService'];
 
