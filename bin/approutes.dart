@@ -24,19 +24,14 @@ class AppRoutes {
 
       loginResponse.then((String sessionToken) {
 
-        Map responseObject;
+        List responseObject;
 
         // Store returned token
         user.putIfAbsent("sessionToken", () => sessionToken);
         req.session.putIfAbsent("sessionToken", () => sessionToken);
-//
-        responseObject['menu'] = new MenuItemService().getAdminMenu();
-//
-        req.response.headers.contentType = ContentTypes.JSON;
 
-        req.response.headers.set("SimpleAppAuthToken", sessionToken);
-
-        req.response.write(JSON.encode(responseObject));
+        req.response.headers.contentType = ContentTypes.TEXT;
+        req.response.write(sessionToken);
 
       })
       .catchError((error) {

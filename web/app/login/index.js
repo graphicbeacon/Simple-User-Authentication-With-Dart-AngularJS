@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    function LoginController (Http, Location, AuthenticationService) {
+    function LoginController (Http, Location, RootScope, AuthenticationService) {
 
         this.title = "Login";
         this.submitted = false;
@@ -18,13 +18,12 @@
 
             AuthenticationService
                 .login(form, this.userCredentials)
-                .success(function(successData, status, headers) {
+                .success(function(authToken, status, headers) {
+                    // Store token locally
+                    localStorage.setItem('SimpleAppAuthToken', authToken);
 
-                    var authToken = headers('SimpleAppAuthToken');
+                    RootScope.loggedIn = true;
 
-                    if(authToken && localStorage.getItem('SimpleAppAuthToken') == null) {
-                        localStorage.setItem('SimpleAppAuthToken', authToken);
-                    }
                     // Redirect to homepage
                     Location.path('/');
 
@@ -40,7 +39,7 @@
         };
     };
 
-    LoginController.$inject = ['$http', '$location', 'AuthenticationService'];
+    LoginController.$inject = ['$http', '$location', '$rootScope', 'AuthenticationService'];
 
     angular.module("simpleApp")
         .controller("LoginController", LoginController);
