@@ -11,17 +11,12 @@
 
     function validateRoutes(Q, AuthenticationService) {
 
-        var validateToken = AuthenticationService.validateToken(localStorage.getItem('SimpleAppAuthToken'));
+        var deferred = AuthenticationService.validateToken();
 
-        if(validateToken) {
-            return Q.when(validateToken);
-        } else {
-            return Q.reject({authenticated: false});
-        }
+        return deferred.promise;
     }
 
     validateRoutes.$inject = ['$q', 'AuthenticationService'];
-
 
     function RoutesConfig (RouteProvider) {
 
@@ -45,10 +40,7 @@
         .when('/login', {
             templateUrl: '/app/login/index.html',
             controller: 'LoginController',
-            controllerAs: 'loginCtrl',
-            resolve: {
-                auth: validateRoutes
-            }
+            controllerAs: 'loginCtrl'
         })
         .when('/projects', {
             templateUrl: '/app/projects/index.html',
@@ -71,10 +63,9 @@
         .config(RoutesConfig)
         .run(function($rootScope, $location, AuthenticationService, NavigationService) {
 
-            var authToken = localStorage.getItem('SimpleAppAuthToken') || '';
             //http://www.sitepoint.com/implementing-authentication-angular-applications/
             $rootScope.$on('$routeChangeError', function(ev, current, previous, eventObj) {
-                if(eventObj.authenticated == false) {
+                if(eventObj.authenticated === false || eventObj.validToken === false) {
                     $location.path('/login');
                 }
             });

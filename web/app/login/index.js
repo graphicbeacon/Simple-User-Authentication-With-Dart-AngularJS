@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    function LoginController (Http, Location, RootScope, AuthenticationService) {
+    function LoginController (AuthenticationService) {
 
         this.title = "Login";
         this.submitted = false;
@@ -16,30 +16,11 @@
                 return;
             }
 
-            AuthenticationService
-                .login(form, this.userCredentials)
-                .success(function(authToken, status, headers) {
-                    // Store token locally
-                    localStorage.setItem('SimpleAppAuthToken', authToken);
-
-                    RootScope.loggedIn = true;
-
-                    // Redirect to homepage
-                    Location.path('/');
-
-                    // Reset form to pristine state
-                    form.$setPristine();
-                    vm.userCredentials = {};
-                    form.problemLogin = false;
-                })
-                .error(function(error) {
-                    form.$setPristine();
-                    form.problemLogin = true;
-                });
+            AuthenticationService.login(form, this.userCredentials);
         };
     }
 
-    LoginController.$inject = ['$http', '$location', '$rootScope', 'AuthenticationService'];
+    LoginController.$inject = ['AuthenticationService'];
 
     angular.module("simpleApp")
         .controller("LoginController", LoginController);

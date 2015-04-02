@@ -74,7 +74,7 @@ class AppRoutes {
     req.transform(UTF8.decoder).listen((String sessionToken) {
 
       if (sessionToken == user["sessionToken"]) {
-        req.response.write('Valid token');
+        req.response.write('Valid token.');
       } else {
         req.response.statusCode = 401;
         req.response.write('Invalid token.');
