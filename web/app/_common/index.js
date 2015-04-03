@@ -70,6 +70,17 @@
             controller: 'LoginController',
             controllerAs: 'loginCtrl',
             resolve: {
+                auth: ['$q', '$location', 'AuthenticationService', function(Q, Location, AuthenticationService) {
+                    var deferred = Q.defer();
+
+                    AuthenticationService.validateToken()
+                        .success(function (validResponse) {
+                            Location.path('/');
+                            deferred.resolve({authenticated: true, response: validResponse});
+                        });
+
+                    return deferred.promise;
+                }],
                 nav: updateNavigation
             }
         })
