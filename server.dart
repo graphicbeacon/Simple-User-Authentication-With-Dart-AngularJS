@@ -33,7 +33,8 @@ void main() {
       ..serve(appResourceUrl).listen(AppRoutes.serveStaticDirectory())
       
       // Rest API Endpoints
-      ..serve(authUrl, method: 'POST').listen(AppRoutes.login)
+      ..serve(loginUrl, method: 'POST').listen(AppRoutes.login)
+      ..serve(logoutUrl, method: 'POST').listen(AppRoutes.logout)
       ..serve(navUrl, method: 'POST').listen(AppRoutes.nav)
       ..serve(tokenUrl, method: 'POST').listen(AppRoutes.validateToken)
       

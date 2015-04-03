@@ -3,11 +3,13 @@
 
     function LoginController (AuthenticationService) {
 
-        this.title = "Login";
-        this.submitted = false;
-        this.userCredentials = {};
+        var vm = this;
 
-        this.authenticate = function(loginFormCtrl) {
+        vm.title = "Login";
+        vm.submitted = false;
+        vm.userCredentials = {};
+
+        vm.authenticate = function(loginFormCtrl) {
             var vm = this;
             var form = loginFormCtrl;
 
@@ -16,7 +18,7 @@
                 return;
             }
 
-            AuthenticationService.login(form, this.userCredentials);
+            AuthenticationService.login(form, vm.userCredentials);
         };
     }
 

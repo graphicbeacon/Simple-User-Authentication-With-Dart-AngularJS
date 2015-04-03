@@ -51,6 +51,34 @@
             controller: 'LoginController',
             controllerAs: 'loginCtrl'
         })
+        .when('/logout', {
+            templateUrl: '/app/logout/index.html',
+            controller: 'LogoutController',
+            controllerAs: 'logoutCtrl',
+            resolve: {
+                logout: ['$q','AuthenticationService', function(Q, AuthenticationService) {
+                    var deferred = Q.defer();
+
+                    AuthenticationService
+                        .logout()
+                        .then(function(response) {
+
+                            // Remove localStorage token
+                            AuthenticationService.setAuthToken(null);
+
+                            deferred.resolve(response.data);
+
+                        },
+                        function(error) {
+                            console.log(error);
+
+                            deferred.reject(error);
+                        });
+
+                    return deferred.promise;
+                }]
+            }
+        })
         .when('/projects', {
             templateUrl: '/app/projects/index.html',
             controller: 'ProjectsController',
@@ -78,7 +106,7 @@
 
             //http://www.sitepoint.com/implementing-authentication-angular-applications/
             $rootScope.$on('$routeChangeError', function(ev, current, previous, response) {
-                console.log(ev, current, previous, eventObj);
+                console.log(ev, current, previous, response);
 
                 if(response.authenticated === false) {
                     $location.path('/login');

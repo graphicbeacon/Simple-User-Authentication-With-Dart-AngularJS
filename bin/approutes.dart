@@ -45,6 +45,17 @@ class AppRoutes {
 
   }
 
+  static void logout (HttpRequest req) {
+
+    // Remove session tokens
+    user.remove("sessionToken");
+    req.session.remove("sessionToken");
+
+    req.response.write("Logged out successfully.");
+    req.response.close();
+
+  }
+
   static void nav (HttpRequest req) {
 
     req.transform(UTF8.decoder).listen((String sessionToken) {

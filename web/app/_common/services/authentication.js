@@ -11,7 +11,11 @@
         };
 
         setAuthToken = function(token) {
-            localStorage.setItem('SimpleAppAuthToken', token);
+            if(token === null || token === false) {
+                localStorage.removeItem('SimpleAppAuthToken');
+            } else {
+                localStorage.setItem('SimpleAppAuthToken', token);
+            }
         };
 
         login = function(form, userCredentials) {
@@ -59,13 +63,16 @@
         };
 
         logout = function(username) {
-            // TODO: Implement logout service
+
+            return Http.post(authUrls.logout, getAuthToken());
+
         };
 
         return {
             login: login,
             logout: logout,
             getAuthToken: getAuthToken,
+            setAuthToken: setAuthToken,
             validateToken: validateToken
         }
     }
