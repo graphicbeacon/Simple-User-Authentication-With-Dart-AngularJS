@@ -17,18 +17,17 @@ class AppRoutes {
 
     req.transform(UTF8.decoder).listen((data) {
 
-      var credLinkedHash = JSON.decode(data);
-      var credentials = credLinkedHash.values.toList();
+      var credentials = JSON.decode(data);
 
-      Future loginResponse = new AuthenticationService(user).login(credentials[0], credentials[1]);
+      Future loginResponse = new AuthenticationService(user).login(credentials["username"], credentials["password"]);
 
       loginResponse.then((String sessionToken) {
 
-        List responseObject;
+        print(sessionToken);
 
         // Store returned token
-        user.putIfAbsent("sessionToken", () => sessionToken);
-        req.session.putIfAbsent("sessionToken", () => sessionToken);
+        user["sessionToken"] = sessionToken;
+        req.session["sessionToken"] = sessionToken;
 
         req.response.headers.contentType = ContentTypes.TEXT;
         req.response.write(sessionToken);
@@ -37,7 +36,6 @@ class AppRoutes {
       .catchError((error) {
 
         req.response.statusCode = 401;
-
         req.response.write(error);
 
       })
@@ -66,16 +64,33 @@ class AppRoutes {
       // close after getting correct menu
       req.response.close();
 
+    },
+    onError: (error) {
+      req.response.write("Problem retrieving navigation");
+      req.response.close();
     });
   }
 
   static void validateToken (HttpRequest req) {
 
-    req.transform(UTF8.decoder).listen((String sessionToken) {
+    req.transform(UTF8.decoder).listen((String tokenJson) {
 
-      if (sessionToken == user["sessionToken"]) {
+      var decodedToken = JSON.decode(tokenJson);
+      var token = decodedToken["data"].replaceFirst('Bearer ', '');
+
+      print('Token $token is being matched...');
+
+      if (token == user["sessionToken"]) {
         req.response.write('Valid token.');
       } else {
+        // Remove session tokens
+        // likely to have been manipulated from clientside localStorage
+        // remove so user could login again to generate new token :-)
+        user.remove("sessionToken");
+        req.session.remove("sessionToken");
+
+        print('Session tokens ${user["sessionToken"]} ${req.session["sessionToken"]}');
+
         req.response.statusCode = 401;
         req.response.write('Invalid token.');
       }

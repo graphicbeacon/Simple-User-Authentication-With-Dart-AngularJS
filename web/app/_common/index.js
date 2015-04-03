@@ -10,15 +10,24 @@
     }
 
     function validateRoutes(Q, AuthenticationService) {
+        var deferred = Q.defer();
 
-        var deferred = AuthenticationService.validateToken();
+        AuthenticationService.validateToken()
+            .then(function (validResponse) {
+                deferred.resolve({authenticated: true, response: validResponse});
+            },
+            function(reason) {
+                deferred.reject({authenticated: false, response: reason});
+            });
 
         return deferred.promise;
     }
 
     validateRoutes.$inject = ['$q', 'AuthenticationService'];
 
-    function RoutesConfig (RouteProvider) {
+    function RoutesConfig (RouteProvider, HttpProvider) {
+        // http://victorblog.com/2012/12/20/make-angularjs-http-service-behave-like-jquery-ajax/
+        HttpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
 
         RouteProvider
         .when('/', {
@@ -55,7 +64,7 @@
         });
     }
 
-    RoutesConfig.$inject = ['$routeProvider'];
+    RoutesConfig.$inject = ['$routeProvider', '$httpProvider'];
 
     // Module Setup
     angular.module('simpleApp', ['ngRoute','ngMessages'])
@@ -63,9 +72,15 @@
         .config(RoutesConfig)
         .run(function($rootScope, $location, AuthenticationService, NavigationService) {
 
+            $rootScope.$on('$routeChangeSuccess', function(ev, current, prev, eventobj) {
+                //console.log('success', ev, current, prev, eventobj);
+            });
+
             //http://www.sitepoint.com/implementing-authentication-angular-applications/
-            $rootScope.$on('$routeChangeError', function(ev, current, previous, eventObj) {
-                if(eventObj.authenticated === false || eventObj.validToken === false) {
+            $rootScope.$on('$routeChangeError', function(ev, current, previous, response) {
+                console.log(ev, current, previous, eventObj);
+
+                if(response.authenticated === false) {
                     $location.path('/login');
                 }
             });

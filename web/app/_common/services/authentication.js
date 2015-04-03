@@ -7,7 +7,7 @@
         authUrls = {
             login: '/auth/login',
             logout: '/auth/logout',
-            validToken: '/auth/token'
+            validateToken: '/auth/token'
         };
 
         setAuthToken = function(token) {
@@ -22,8 +22,6 @@
                 .then(function(response, status, headers) {
 
                     var authToken = response.data;
-
-                    console.log(response);
 
                     // Store token locally
                     setAuthToken(authToken);
@@ -53,17 +51,11 @@
         };
 
         validateToken = function() {
-            var deferred = Q.defer();
 
-            Http.post(authUrls.validToken, this.getAuthToken())
-                .then(function() {
-                    deferred.resolve({ validToken: true });
-                },
-                function(error) {
-                    deferred.reject({ validToken: false });
-                });
+            var token = getAuthToken();
 
-            return deferred.promise;
+            return Http.post(authUrls.validateToken, { data: 'Bearer ' + token });
+
         };
 
         logout = function(username) {
