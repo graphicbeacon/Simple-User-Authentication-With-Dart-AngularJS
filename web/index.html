@@ -33,11 +33,8 @@
               <a class="navbar-brand" href="#/" ng-cloak>{{simpleAppCtrl.appName}}</a>
             </div>
             <ul class="nav navbar-nav navbar-right">
-                <li ng-repeat="nav in globalNav">
+                <li ng-repeat="nav in globalNav" ng-class="{'active' : currentUrl === nav.url}">
                     <a href="{{nav.url}}">{{nav.name}}</a>
-                </li>
-                <li>
-                    <a href="#/logout">Logout</a>
                 </li>
             </ul>
           </div>

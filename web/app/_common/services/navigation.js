@@ -2,10 +2,9 @@
     'use strict';
 
     function NavigationService (Http) {
-        var sessionToken = localStorage.getItem('SimpleAppAuthToken') || '';
 
-        var getNav = function() {
-            return Http.post('/auth/nav', sessionToken);
+        var getNav = function(sessionToken) {
+            return Http.post('/auth/nav', {data: sessionToken});
         };
 
         return {

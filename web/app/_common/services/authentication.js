@@ -58,7 +58,7 @@
 
             var token = getAuthToken();
 
-            return Http.post(authUrls.validateToken, { data: 'Bearer ' + token });
+            return Http.post(authUrls.validateToken, { data: token });
 
         };
 

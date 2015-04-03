@@ -25,6 +25,23 @@
 
     validateRoutes.$inject = ['$q', 'AuthenticationService'];
 
+    function updateNavigation (Q, RootScope, AuthenticationService, NavigationService) {
+        var deferred = Q.defer();
+
+        NavigationService
+            .getNav(AuthenticationService.getAuthToken())
+            .then(function(response) {
+                deferred.resolve({menu: response.data});
+            },
+            function(error) {
+                deferred.reject(error);
+            });
+
+        return deferred.promise;
+    }
+
+    updateNavigation.$inject = ['$q', '$rootScope', 'AuthenticationService', 'NavigationService'];
+
     function RoutesConfig (RouteProvider, HttpProvider) {
         // http://victorblog.com/2012/12/20/make-angularjs-http-service-behave-like-jquery-ajax/
         HttpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
@@ -35,7 +52,8 @@
             controller: 'DashboardController',
             controllerAs: 'dashboardCtrl',
             resolve: {
-                auth: validateRoutes
+                auth: validateRoutes,
+                nav: updateNavigation
             }
         })
         .when('/account', {
@@ -43,13 +61,17 @@
             controller: 'AccountController',
             controllerAs: 'accountCtrl',
             resolve: {
-                auth: validateRoutes
+                auth: validateRoutes,
+                nav: updateNavigation
             }
         })
         .when('/login', {
             templateUrl: '/app/login/index.html',
             controller: 'LoginController',
-            controllerAs: 'loginCtrl'
+            controllerAs: 'loginCtrl',
+            resolve: {
+                nav: updateNavigation
+            }
         })
         .when('/logout', {
             templateUrl: '/app/logout/index.html',
@@ -76,7 +98,8 @@
                         });
 
                     return deferred.promise;
-                }]
+                }],
+                nav: updateNavigation
             }
         })
         .when('/projects', {
@@ -84,7 +107,8 @@
             controller: 'ProjectsController',
             controllerAs: 'projectsCtrl',
             resolve: {
-                auth: validateRoutes
+                auth: validateRoutes,
+                nav: updateNavigation
             }
         })
         .otherwise({
@@ -98,21 +122,26 @@
     angular.module('simpleApp', ['ngRoute','ngMessages'])
         .controller('SimpleAppController', SimpleAppController)
         .config(RoutesConfig)
-        .run(function($rootScope, $location, AuthenticationService, NavigationService) {
+        .run(['$rootScope', '$location', 'AuthenticationService', 'NavigationService',
+            function($rootScope, $location, AuthenticationService, NavigationService) {
 
-            $rootScope.$on('$routeChangeSuccess', function(ev, current, prev, eventobj) {
-                //console.log('success', ev, current, prev, eventobj);
+            $rootScope.$on('$routeChangeSuccess', function(event, response) {
+                // Update global navigation
+                $rootScope.globalNav = response.locals.nav.menu;
+                $rootScope.currentUrl = '#' + response.$$route.originalPath;
+
+                console.log('Route change success', event, response);
             });
 
             //http://www.sitepoint.com/implementing-authentication-angular-applications/
             $rootScope.$on('$routeChangeError', function(ev, current, previous, response) {
-                console.log(ev, current, previous, response);
+                console.log('Route change error', ev, current, previous, response);
 
                 if(response.authenticated === false) {
                     $location.path('/login');
                 }
             });
 
-        });
+        }]);
 
 })();
