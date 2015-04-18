@@ -10,20 +10,20 @@ class ContentTypes {
   static final TEXT = ContentType.parse("text/plain");
 
   static final _extensions = <String, ContentType>{
-      'css': CSS,
-      'dart': DART,
-      'html': HTML,
-      'jpg': JPEG,
-      'js': JAVASCRIPT,
-      'json': JSON,
-      'txt': TEXT,
+    'css': CSS,
+    'dart': DART,
+    'html': HTML,
+    'jpg': JPEG,
+    'js': JAVASCRIPT,
+    'json': JSON,
+    'txt': TEXT,
   };
 
   static ContentType addTypeForExtension(String extension, ContentType type) =>
-  _extensions[extension] = type;
+      _extensions[extension] = type;
 
   static ContentType forExtension(String extension) => _extensions[extension];
 
   static ContentType forFile(File file) =>
-  _extensions[path.extension(file.path).replaceFirst('.','')];
+      _extensions[path.extension(file.path).replaceFirst('.', '')];
 }
