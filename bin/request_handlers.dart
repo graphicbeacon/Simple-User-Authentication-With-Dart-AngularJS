@@ -26,8 +26,6 @@ Function serveResource({String directory, String filePath}) {
       return;
     }
 
-    //print(filePathFull);
-
     File file = new File(filePathFull);
     response.headers.contentType = ContentTypes.forFile(file);
     file.openRead().pipe(response).catchError((error) {

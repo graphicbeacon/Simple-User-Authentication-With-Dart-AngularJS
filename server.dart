@@ -25,21 +25,24 @@ final PORT = 4567;
 
 void main() {
 
-  HttpServer.bind(HOST, PORT).then((server) {
+  AppRoutes route = new AppRoutes();
+  Future server = HttpServer.bind(HOST, PORT);
+
+  server.then((server) {
     print("Server listening at ${HOST}:$PORT");
     
     new Router(server)
-      ..serve(indexUrl).listen(AppRoutes.serveSpaIndex())
-      ..serve(appResourceUrl).listen(AppRoutes.serveStaticDirectory())
+      ..serve(indexUrl).listen(route.serveSpaIndex())
+      ..serve(appResourceUrl).listen(route.serveStaticDirectory())
       
       // Rest API Endpoints
-      ..serve(loginUrl, method: 'POST').listen(AppRoutes.login)
-      ..serve(logoutUrl, method: 'POST').listen(AppRoutes.logout)
-      ..serve(navUrl, method: 'POST').listen(AppRoutes.nav)
-      ..serve(tokenUrl, method: 'POST').listen(AppRoutes.validateToken)
+      ..serve(loginUrl, method: 'POST').listen(route.login)
+      ..serve(logoutUrl, method: 'POST').listen(route.logout)
+      ..serve(navUrl, method: 'POST').listen(route.nav)
+      ..serve(tokenUrl, method: 'POST').listen(route.validateToken)
       
       // Default Response for Not Found
-      ..defaultStream.listen(AppRoutes.errorPageHandler());
+      ..defaultStream.listen(route.errorPageHandler());
     
   }).catchError(handleError);
 }

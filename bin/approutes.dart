@@ -3,13 +3,14 @@ part of simpleApp;
 var user = {"username": "admin", "password": "superman"};
 
 class AppRoutes {
-  static Function serveSpaIndex() => serveResource(filePath: 'index.html');
 
-  static Function serveStaticDirectory() => serveResource();
+  Function serveSpaIndex() => serveResource(filePath: 'index.html');
 
-  static Function errorPageHandler() => errorPageHandler;
+  Function serveStaticDirectory() => serveResource();
 
-  static void login(HttpRequest req) {
+  Function errorPageHandler() => errorPageHandler;
+
+  void login(HttpRequest req) {
     req.transform(UTF8.decoder).listen((data) {
       var credentials = JSON.decode(data);
 
@@ -32,7 +33,7 @@ class AppRoutes {
     });
   }
 
-  static void logout(HttpRequest req) {
+  void logout(HttpRequest req) {
 
     // Remove session tokens
     user.remove("sessionToken");
@@ -42,7 +43,7 @@ class AppRoutes {
     req.response.close();
   }
 
-  static void nav(HttpRequest req) {
+  void nav(HttpRequest req) {
     req.transform(UTF8.decoder).listen((String tokenJson) {
       var decodedToken = JSON.decode(tokenJson);
       var token = decodedToken["data"];
@@ -60,7 +61,7 @@ class AppRoutes {
     });
   }
 
-  static void validateToken(HttpRequest req) {
+  void validateToken(HttpRequest req) {
     req.transform(UTF8.decoder).listen((String tokenJson) {
       var decodedToken = JSON.decode(tokenJson);
       var token = decodedToken["data"];
