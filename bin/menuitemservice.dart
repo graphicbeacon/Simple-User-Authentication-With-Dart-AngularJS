@@ -5,7 +5,7 @@ class MenuItemService {
 
   List getAdminMenu() {
     return [
-      new MenuItem('#/', 'Dashboard').create(),
+      new MenuItem('#/dashboard', 'Dashboard').create(),
       new MenuItem('#/account', 'Account').create(),
       new MenuItem('#/projects', 'Projects').create(),
       new MenuItem('#/logout', 'Logout').create()
@@ -14,7 +14,7 @@ class MenuItemService {
 
   List getDefaultMenu() {
     return [
-      new MenuItem('#/', 'Dashboard').create(),
+      new MenuItem('#/', 'Home').create(),
       new MenuItem('#/login', 'Login').create()
     ];
   }

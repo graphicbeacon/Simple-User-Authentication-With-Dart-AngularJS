@@ -48,6 +48,14 @@
 
         RouteProvider
         .when('/', {
+            templateUrl: '/app/home/index.html',
+            controller: 'HomeController',
+            controllerAs: 'homeCtrl',
+            resolve: {
+                nav: updateNavigation
+            }
+        })
+        .when('/dashboard', {
             templateUrl: '/app/dashboard/index.html',
             controller: 'DashboardController',
             controllerAs: 'dashboardCtrl',
@@ -70,17 +78,6 @@
             controller: 'LoginController',
             controllerAs: 'loginCtrl',
             resolve: {
-                auth: ['$q', '$location', 'AuthenticationService', function(Q, Location, AuthenticationService) {
-                    var deferred = Q.defer();
-
-                    AuthenticationService.validateToken()
-                        .success(function (validResponse) {
-                            Location.path('/');
-                            deferred.resolve({authenticated: true, response: validResponse});
-                        });
-
-                    return deferred.promise;
-                }],
                 nav: updateNavigation
             }
         })
