@@ -8,7 +8,9 @@ class AppRoutes {
 
   Function serveStaticDirectory() => serveResource();
 
-  Function errorPageHandler() => errorPageHandler;
+  void errorPageHandler(error) {
+    print("Problem loading resource: $error");
+  }
 
   void login(HttpRequest req) {
     req.transform(UTF8.decoder).listen((data) {

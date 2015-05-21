@@ -42,7 +42,7 @@ void main() {
       ..serve(tokenUrl, method: 'POST').listen(route.validateToken)
       
       // Default Response for Not Found
-      ..defaultStream.listen(route.errorPageHandler());
+      ..defaultStream.listen(route.errorPageHandler);
     
   }).catchError(handleError);
 }

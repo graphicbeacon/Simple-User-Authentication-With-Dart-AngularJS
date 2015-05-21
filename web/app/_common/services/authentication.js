@@ -33,7 +33,7 @@
                     deferred.resolve(authToken);
 
                     // Redirect to homepage
-                    Location.path('/');
+                    Location.path('/dashboard');
 
                     // Reset form to pristine state
                     form.$setPristine();
