@@ -1,4 +1,4 @@
-part of simpleApp;
+part of simple_app;
 
 class MenuItemService {
   MenuItemService();

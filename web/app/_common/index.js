@@ -44,7 +44,7 @@
 
     function RoutesConfig (RouteProvider, HttpProvider) {
         // http://victorblog.com/2012/12/20/make-angularjs-http-service-behave-like-jquery-ajax/
-        HttpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+        //HttpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
 
         RouteProvider
         .when('/', {

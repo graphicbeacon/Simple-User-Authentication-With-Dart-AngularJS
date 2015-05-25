@@ -1,4 +1,4 @@
-part of simpleApp;
+part of utils;
 
 class ContentTypes {
   static final CSS = ContentType.parse("text/css");

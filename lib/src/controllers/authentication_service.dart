@@ -1,15 +1,15 @@
-part of simpleApp;
+part of simple_app;
 
 class AuthenticationService {
   var store;
 
   AuthenticationService(this.store);
 
-  Future login(String username, String plainTextPassword) {
+  Future login(Map<String, String> credentials) {
     var completer = new Completer();
 
-    if (this.store["username"] == username &&
-        this.store["password"] == plainTextPassword) {
+    if (this.store["username"] == credentials["username"] &&
+        this.store["password"] == credentials["password"]) {
       // Create session token
       var sessionToken = new Uuid().v1();
 

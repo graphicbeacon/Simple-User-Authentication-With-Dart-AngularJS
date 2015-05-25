@@ -11,7 +11,7 @@
         };
 
         setAuthToken = function(token) {
-            if(token === null || token === false) {
+            if(!token) {
                 localStorage.removeItem('SimpleAppAuthToken');
             } else {
                 localStorage.setItem('SimpleAppAuthToken', token);
@@ -62,9 +62,10 @@
 
         };
 
-        logout = function(username) {
+        logout = function() {
+            var token = getAuthToken();
 
-            return Http.post(authUrls.logout, getAuthToken());
+            return Http.post(authUrls.logout, { data: token });
 
         };
 
