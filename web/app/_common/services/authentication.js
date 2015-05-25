@@ -20,34 +20,8 @@
 
         login = function(form, userCredentials) {
 
-            var deferred = Q.defer();
+            return Http.post(authUrls.login, { data: userCredentials });
 
-            Http.post(authUrls.login, userCredentials)
-                .then(function(response, status, headers) {
-
-                    var authToken = response.data;
-
-                    // Store token locally
-                    setAuthToken(authToken);
-
-                    deferred.resolve(authToken);
-
-                    // Redirect to homepage
-                    Location.path('/dashboard');
-
-                    // Reset form to pristine state
-                    form.$setPristine();
-                    form.problemLogin = false;
-                },
-                function(error) {
-
-                    deferred.reject(error);
-
-                    form.$setPristine();
-                    form.problemLogin = true;
-                });
-
-            return deferred.promise;
         };
 
         getAuthToken = function() {

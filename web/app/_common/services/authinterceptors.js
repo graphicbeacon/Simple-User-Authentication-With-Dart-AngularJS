@@ -11,12 +11,12 @@
 
         responseError = function(error) {
 
-            if(error.status === 401) {
-                Location.path('/login');
-                return Q.reject(error);
+            if(error.status === 401 ||
+                error.status === 403) {
+                return Q.reject(error.data);
             }
 
-            return Q.reject(error.data);
+            return Q.reject(error);
         };
 
         return {

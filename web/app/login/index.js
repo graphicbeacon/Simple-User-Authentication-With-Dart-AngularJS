@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    function LoginController (AuthenticationService) {
+    function LoginController (Q, Location, AuthenticationService) {
 
         var vm = this;
 
@@ -18,11 +18,33 @@
                 return;
             }
 
-            AuthenticationService.login(form, vm.userCredentials);
+            AuthenticationService.login(form, vm.userCredentials)
+                .then(function(response, status, headers) {
+
+                    var authToken = response.data;
+
+                    // Store token locally
+                    AuthenticationService.setAuthToken(authToken);
+
+                    // Reset form to pristine state
+                    form.$setPristine();
+                    form.problemLogin = false;
+
+                    // Proceed to dashboard
+                    Location.path('/dashboard');
+                },
+                function(error) {
+
+                    form.$setPristine();
+                    form.problemLogin = true;
+                    vm.userCredentials = {};
+
+                    Q.reject(error);
+                });
         };
     }
 
-    LoginController.$inject = ['AuthenticationService'];
+    LoginController.$inject = ['$q', '$location', 'AuthenticationService'];
 
     angular.module("simpleApp")
         .controller("LoginController", LoginController);

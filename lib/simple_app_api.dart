@@ -6,6 +6,7 @@ import 'dart:async';
 
 // Dart pub packages
 import 'package:redstone/server.dart' as app;
+import 'package:shelf/shelf.dart' as shelf;
 import 'package:uuid/uuid.dart';
 
 import 'src/utils.dart';
@@ -22,32 +23,37 @@ var user = {"username": "admin", "password": "superman"};
 class SimpleAppApi {
 
 	@app.Route('/login', methods: const [app.POST])
-	login(@app.Body(app.JSON) Map payload) {
-		var token = payload["data"];
+	login(@app.Body(app.JSON) Map payload) async {
 
-		Future loginResponse = new AuthenticationService(user).login(payload);
+		var credentials = payload["data"];
+		var loginResponse = await new AuthenticationService(user).login(credentials);
 
-		loginResponse.then((String sessionToken) {
-			print(sessionToken);
+		if(loginResponse != "Wrong username or password.") {
 
+			var sessionToken = loginResponse;
 			// Store returned token
 			user["sessionToken"] = sessionToken;
 			app.request.session["sessionToken"] = sessionToken;
 
+			return new shelf.Response.ok(
+				sessionToken,
+				headers: {
+					"Content-Type": ContentTypes.TEXT.toString()
+				}
+			);
 
-			// TODO: Include username param in response
-			app.chain.interrupt(
-				statusCode: HttpStatus.ACCEPTED,
-				responseValue: sessionToken
+		} else {
+
+			var error = loginResponse;
+			return new shelf.Response(
+				HttpStatus.UNAUTHORIZED,
+				body: error,
+				headers: {
+					"Content-Type" : ContentTypes.TEXT.toString()
+				}
 			);
-		})
-		.catchError((error) {
-			// TODO: Set correct response types
-			app.chain.interrupt(
-				statusCode: HttpStatus.UNAUTHORIZED,
-				responseValue: error
-			);
-		});
+
+		}
 	}
 
 
@@ -61,10 +67,11 @@ class SimpleAppApi {
 		user.remove("sessionToken");
 		app.request.session.remove("sessionToken");
 
-		// TODO: Set correct response types
-		app.chain.interrupt(
-			statusCode: HttpStatus.ACCEPTED,
-			responseValue: "Logged out successfully."
+		return new shelf.Response.ok(
+			"Logged out successfully.",
+			headers: {
+				'Content-Type': ContentTypes.TEXT.toString()
+			}
 		);
 	}
 
@@ -74,10 +81,23 @@ class SimpleAppApi {
 
 		if (token != null && token == user["sessionToken"]) {
 			var adminMenu = JSON.encode(new MenuItemService().getAdminMenu());
-			return adminMenu;
+
+			return new shelf.Response.ok(
+				adminMenu,
+				headers: {
+					"Content-Type": ContentTypes.JSON.toString()
+				}
+			);
+
 		} else {
 			var defaultMenu = JSON.encode(new MenuItemService().getDefaultMenu());
-			return defaultMenu;
+
+			return new shelf.Response.ok(
+				defaultMenu,
+				headers: {
+					"Content-Type": ContentTypes.JSON.toString()
+				}
+			);
 		}
 	}
 
@@ -89,7 +109,14 @@ class SimpleAppApi {
 		print('Token $token is being matched...');
 
 		if (token != null && token == user["sessionToken"]) {
-			return "Valid token.";
+
+			return new shelf.Response.ok(
+				"Valid token.",
+				headers: {
+					"Content-Type": ContentTypes.TEXT.toString()
+				}
+			);
+
 		} else {
 			// Remove session tokens
 			// likely to have been manipulated from clientside localStorage
@@ -99,10 +126,12 @@ class SimpleAppApi {
 
 			print('Session tokens ${user["sessionToken"]} ${app.request.session["sessionToken"]}');
 
-			// TODO: Return correct response type
-			app.chain.interrupt(
-				statusCode: HttpStatus.UNAUTHORIZED,
-				responseValue: "Invalid token"
+			return new shelf.Response(
+				HttpStatus.UNAUTHORIZED,
+				body: "Invalid token.",
+				headers: {
+					"Content-Type": ContentTypes.TEXT.toString()
+				}
 			);
 		}
 

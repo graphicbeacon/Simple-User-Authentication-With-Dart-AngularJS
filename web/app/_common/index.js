@@ -1,9 +1,9 @@
 (function(){
     'use strict';
 
-
     // TODO: Logic to manage top navigation items, maybe on rootScope
-    // TODO: Manage all urls in service?
+    // TODO: Have .run block in another file?
+    // TODO: Create provider to contain route resolvers
 
     function SimpleAppController () {
         this.appName = "Simple App";
@@ -45,6 +45,7 @@
     function RoutesConfig (RouteProvider, HttpProvider) {
         // http://victorblog.com/2012/12/20/make-angularjs-http-service-behave-like-jquery-ajax/
         //HttpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+        HttpProvider.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
 
         RouteProvider
         .when('/', {
@@ -135,8 +136,10 @@
 
             $rootScope.$on('$routeChangeSuccess', function(event, response) {
                 // Update global navigation
-                $rootScope.globalNav = response.locals.nav.menu;
-                $rootScope.currentUrl = '#' + response.$$route.originalPath;
+                if(response.locals.nav) {
+                    $rootScope.globalNav = response.locals.nav.menu;
+                    $rootScope.currentUrl = '#' + response.$$route.originalPath;
+                }
 
                 console.log('Route change success', event, response);
             });
